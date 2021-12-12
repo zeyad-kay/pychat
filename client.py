@@ -6,18 +6,32 @@ HOST = "127.0.0.1" #localhost
 PORT = 3000
 
 def connect(host, port):
+    '''
+    Create the socket and connect it to the server on the specified host and port
+    then return it.
+    '''
     return
 
 def write(socket, data):
+    '''
+    Write data into the socket using sendall
+    '''
     return
 
 def read(socket):
-    # simulates waiting time of server
+    '''
+    Read data into the socket using recv. You will have to loop until all bytes have been
+    read.
+    '''
+    # simulates waiting time of server response
+    # mainly used for testing the typing animation
     simulate_delay(1.5)
     return "Data from server."
 
 def main():
     # Initialize connection to the host
+    # only done once on start and we keep it open
+    # until we are done
     sock = connect(HOST, PORT)
     
     # make requests on another thread to make animations
