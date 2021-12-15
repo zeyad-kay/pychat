@@ -1,61 +1,86 @@
 import socket
 from utils import *
-import concurrent.futures
+import logging
+import asyncio
 
 HOST = "127.0.0.1" #localhost
 PORT = 3000
 
-def connect(host, port):
-    '''
-    Create the socket and connect it to the server on the specified host and port
-    then return it.
-    '''
-    return
+def connect(host: str, port: int):
+    """Connect to a server on specified host and port.
 
-def write(socket, data):
-    '''
-    Write data into the socket using sendall
-    '''
-    return
+    Args:
+        host (str): host server.
+        port (int): port to connect to.
 
-def read(socket):
-    '''
-    Read data into the socket using recv. You will have to loop until all bytes have been
-    read.
-    '''
+    Returns:
+        socket object. None if unsuccessful.
+    """    
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        sock.connect((host, port))
+    except Exception as e:
+        logging.error(e)
+        sock = sock.close()
+    finally:
+        return sock
+
+def write(socket: socket.socket, data: str):
+    """Write data into a socket.
+    
+    Args:
+        socket (socket): socket to use when writing.
+        data (str): data to write.
+    """    
+    socket.sendall(data.encode())
+
+async def read(socket: socket.socket):
+    """Read data from a socket
+
+    Args:
+        socket (socket): socket to use when reading.
+
+    Returns:
+        str: data read from socket.
+    """    
+    msg = socket.recv(1024).decode()
+
     # simulates waiting time of server response
     # mainly used for testing the typing animation
-    simulate_delay(1.5)
-    return "Data from server."
+    await simulate_delay(0.5)
+    return msg
 
-def main():
+async def main():
+    logging.basicConfig(filename="logs/client.log",filemode="w", level=20, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+
     # Initialize connection to the host
-    # only done once on start and we keep it open
+    # only done on start and we keep it open
     # until we are done
     sock = connect(HOST, PORT)
+    if sock is None:
+        print("Server Unavailable. Try Again!")
+        exit()
     
-    # make requests on another thread to make animations
-    # on the main thread
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as exec:
-        # chat loop
-        while True:
-            # wait for user input
-            text = input("User: ")
+    # chat loop
+    while True:
+        # wait for user input
+        text = input("User: ")
+        
+        if text == "exit" or text == "bye":
+            sock.close()
+            print(f"Chatbot: bye!", flush=True)
+            exit()
+        
+        write(sock, text)
+        
+        # asynchronously read the response to make animations.
+        # Equivalent to Promises in Javascript.
+        task = asyncio.create_task(read(sock))
 
-            if text == "exit":
-                # close socket before returning
-                return
-
-            # write input to socket
-            write(sock, text)
-
-            # start waiting for response on the other thread
-            # freeing up the main one for animation
-            response = exec.submit(read, sock)
-            while not response.done():
-                animate_typing()
-
-            print(f"Chatbot: {response.result()}", flush=True)
+        while not task.done():
+            await animate_typing()
+        
+        print(f"Chatbot: {task.result()}", flush=True)
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
