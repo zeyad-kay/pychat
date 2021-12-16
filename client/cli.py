@@ -22,14 +22,14 @@ def cli():
     NAME, EMAIL, OK = authenticate(MAX_ATTEMPTS)
 
     if not OK:
-        print(f"Try again in {BLOCK_TIME} minutes!")
+        print(f"Unauthorized. Try again in {BLOCK_TIME} minutes!")
         net.current_socket.close()
         exit()
 
     # make requests on another thread to make animations
     # on the main thread
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as exec:
-        print(f"Chatbot: Hi {NAME}!")
+        print(f"Chatbot: hi {NAME}. Ask me anything!")
         # chat loop
         while True:
             # wait for user input
