@@ -16,20 +16,20 @@ def authenticate(MAX_ATTEMPTS: int = 3) -> tuple:
         tuple: Name, Email provided by user and whether the user is OK to 
         start chatting
     """    
-    name = challenge("Name", MAX_ATTEMPTS, len)
-    if not name:
+    name, OK = challenge("Name", len, MAX_ATTEMPTS)
+    if not OK:
         return (None, None, False)
     
-    email = challenge("Email", MAX_ATTEMPTS, valid_email)
-    if not email:
+    email, OK = challenge("Email", valid_email, MAX_ATTEMPTS)
+    if not OK:
         return (None, None, False)
 
     request_token(email)
 
     print(f"A Token has been sent to {email}.")
 
-    valid = challenge("Token", MAX_ATTEMPTS, valid_token)
-    if not valid:
+    _, OK = challenge("Token", valid_token, MAX_ATTEMPTS)
+    if not OK:
         return (None, None, False)
     
     return (name, email, True)
