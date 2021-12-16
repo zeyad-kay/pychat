@@ -1,9 +1,12 @@
 '''
 Provide client side security functions.
 '''
-from lib import valid_email
 import net
 from collections.abc import Callable
+import re
+
+def valid_email(email: str) -> bool:   
+    return re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', email)
 
 def authenticate(MAX_ATTEMPTS: int = 3) -> tuple:
     """Authenticate user before starting the chat by providing name, email, and

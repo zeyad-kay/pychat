@@ -3,6 +3,9 @@ Implement server security functions.
 Functions include email validation before starting the chat. A token is sent to
 the user's provided email and the token must match the one on the server.
 '''
+def valid_email(email: str) -> bool:   
+    import re
+    return re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', email)
 
 def generate_token(email: str):
     """Generates a token and saves it to Mongo
@@ -17,7 +20,6 @@ def generate_token(email: str):
         str: Generated Token.
     """    
     import secrets
-    from lib import valid_email
     import mongo
 
     if not valid_email(email):
@@ -46,7 +48,6 @@ def verify_token(email: str, token: str) -> bool:
     Returns:
         bool: Whether token is valid or not.
     """    
-    from lib import valid_email
     import mongo
     
     if not valid_email(email):
@@ -55,7 +56,12 @@ def verify_token(email: str, token: str) -> bool:
     result = mongo.db["tokens"].find_one({"email": email})
     if not result:
         return False
-    return result.get("token") == token
+    
+    if result.get("token") == token:
+        mongo.db["tokens"].delete_one({ "email": email })
+        return True
+    else:
+        return False
 
 def email_token(email: str, token: str):
     """Send token to user's email.
@@ -68,7 +74,6 @@ def email_token(email: str, token: str):
         ValueError: When the email is invalid or token is empty.
     """  
     import mail
-    from lib import valid_email
     import os
 
     if not valid_email(email):

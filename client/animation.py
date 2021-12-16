@@ -1,4 +1,12 @@
-from lib import simulate_delay
+import time
+
+def simulate_delay(seconds: float = 1):
+    """Simulate server delay for specified seconds.
+
+    Args:
+        seconds (float, optional): Time in seconds. Defaults to 1.
+    """    
+    time.sleep(seconds)
 
 def clear_line():
     """Removes current line in the console.
