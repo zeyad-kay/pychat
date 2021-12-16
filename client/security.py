@@ -24,7 +24,7 @@ def authenticate(MAX_ATTEMPTS: int = 3) -> tuple:
     if not email:
         return (None, None, False)
 
-    send_token(email)
+    request_token(email)
 
     print(f"A Token has been sent to {email}.")
 
@@ -70,5 +70,10 @@ def valid_token(token: str) -> bool:
     net.write(net.current_socket, token)
     return bool(int(net.read(net.current_socket)))
 
-def send_token(email: str):
+def request_token(email: str):
+    """Requset the server for a token
+
+    Args:
+        email (str): Email to send the token to.
+    """    
     net.write(net.current_socket, email)
