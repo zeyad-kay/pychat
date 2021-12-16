@@ -1,3 +1,6 @@
+'''
+Provide client side security functions.
+'''
 from lib import valid_email
 import net
 from collections.abc import Callable
@@ -10,7 +13,8 @@ def authenticate(MAX_ATTEMPTS: int = 3) -> tuple:
         MAX_ATTEMPTS (int): Max number of failed attempts. Defaults to 3.
 
     Returns:
-        tuple: [description]
+        tuple: Name, Email provided by user and whether the user is OK to 
+        start chatting
     """    
     name = challenge("Name", MAX_ATTEMPTS, len)
     if not name:
