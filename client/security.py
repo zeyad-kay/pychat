@@ -65,6 +65,8 @@ def valid_token(token: str) -> bool:
     Returns:
         bool: Whether the token is valid or not.
     """    
+    if len(token) == 0:
+        return False
     net.write(net.current_socket, token)
     return bool(int(net.read(net.current_socket)))
 
