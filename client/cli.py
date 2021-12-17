@@ -8,22 +8,23 @@ HOST = "127.0.0.1" #localhost
 PORT = 3000
 MAX_ATTEMPTS = 3
 BLOCK_TIME = 5 #minutes
+
 def cli():
-    logging.basicConfig(filename="logs/client.log",filemode="w",level=20, format='%(asctime)s:%(levelNAME)s:%(NAME)s:%(message)s')
+    logging.basicConfig(filename="logs/client.log",filemode="w",level=20, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
 
     # Initialize connection to the host
     # only done on start and we keep it open
     # until we are done
     net.current_socket = net.connect(HOST, PORT)
     if net.current_socket is None:
-        print(f"Server Unavailable. Try again in {BLOCK_TIME} minutes.!")
+        print(f"Server Unavailable. Try again in {BLOCK_TIME} minutes!")
         exit()
 
     NAME, EMAIL, OK = authenticate(MAX_ATTEMPTS)
 
     if not OK:
         print(f"Unauthorized. Try again in {BLOCK_TIME} minutes!")
-        net.current_socket.close()
+        net.close(net.current_socket)
         exit()
 
     # make requests on another thread to make animations
@@ -36,7 +37,7 @@ def cli():
             text = input(f"{NAME}: ")
 
             if text == "exit" or text == "bye":
-                net.current_socket.close()
+                net.close(net.current_socket)
                 print(f"Chatbot: bye!", flush=True)
                 exit()
 
