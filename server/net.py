@@ -15,17 +15,17 @@ def start(host: str, port: int):
     sock.listen()
     return sock
 
-def write(socket: socket.socket, data: str):
-    """Write data into a socket.
+def write(connection, data: str):
+    """Write data into a connection.
     
     Args:
         socket (socket): socket to use when writing.
         data (str): data to write.
     """    
-    socket.sendall(data.encode())
+    connection.sendall(data.encode())
 
-def read(socket: socket.socket):
-    """Read data from a socket
+def read(connection):
+    """Read data from a connection
 
     Args:
         socket (socket): socket to use when reading.
@@ -35,4 +35,4 @@ def read(socket: socket.socket):
     """    
     # simulates waiting time of server response
     # mainly used for testing the typing animation
-    return socket.recv(1024).decode()
+    return connection.recv(1024).decode()

@@ -107,7 +107,7 @@ def authenticate(connection):
     while True :
         # first listen to the message that carry the email to send tha token
         if(not mailSent) :
-            email = net.read(net.current_socket)
+            email = net.read(connection)
             if not email : 
                 continue
             mailSent = True
@@ -116,16 +116,16 @@ def authenticate(connection):
             email_token(email,generated_token)
         # second verify the token given by the client
         if(not tokenSent) :
-            token = net.read(net.current_socket)
+            token = net.read(connection)
             if(not token) :
                 continue
             tokenSent = True
             if(verify_token(email,token)) :
-                net.write(net.current_socket,"1")
+                net.write(connection,"1")
             else : 
-                net.write(net.current_socket,"0")
+                net.write(connection,"0")
         if(mailSent and tokenSent) :
             authentication = True
             break
-        
+
     return authentication

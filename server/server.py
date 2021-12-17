@@ -21,7 +21,6 @@ as non blocking and use the asyncio module that provides some helpers.
 (Ignore this if you haven't used Node.js or you don't have time.)
 
 '''
-from os import truncate
 import net
 import concurrent.futures
 import logging
@@ -43,7 +42,10 @@ def server() :
         # verify the token to start the chat
         authenticate(conn)
 
-        
+        # ready to listen for the client requests
+        while True :
+            request = net.read(conn)
+            # process the request here
          
 if __name__ == "__main__":
     server()
