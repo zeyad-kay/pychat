@@ -3,6 +3,7 @@ Implement server security functions.
 Functions include email validation before starting the chat. A token is sent to
 the user's provided email and the token must match the one on the server.
 '''
+import socket
 import net
 
 def valid_email(email: str) -> bool:   
@@ -10,7 +11,7 @@ def valid_email(email: str) -> bool:
     return re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', email)
 
 def generate_token(email: str):
-    """Generates a token and saves it to Mongo
+    """Generate a token and save it to Mongo
 
     Args:
         email (str): Email to bind the token to.
@@ -26,7 +27,7 @@ def generate_token(email: str):
 
     if not valid_email(email):
         raise ValueError("Invalid email.")
-     
+    
     mongo.db["tokens"].delete_one({
         "email": email
     })
@@ -60,7 +61,6 @@ def verify_token(email: str, token: str) -> bool:
         return False
     
     if result.get("token") == token:
-        mongo.db["tokens"].delete_one({ "email": email })
         return True
     else:
         return False
@@ -92,40 +92,35 @@ def email_token(email: str, token: str):
     '''
     mail.server.sendmail(from_addr=os.environ.get("SENDER_EMAIL"), to_addrs=email, msg=msg)
 
-def authenticate(connection):
+def authenticate(socket: socket.socket, MAX_ATTEMPTS: int) -> bool:
     """Authenticate user before starting the chat by sending a token to his email and 
-    comparing that token to the entered one. it waits until authentication is done.
+    comparing that token to the entered one. It waits until authentication is done.
 
     Args:
-        connection : Connection between the client and the server.
-    
-    """ 
-    authentication = False
-    mailSent = False
-    tokenSent = False
-    email = None
-    while True :
-        # first listen to the message that carry the email to send tha token
-        if(not mailSent) :
-            email = net.read(connection)
-            if not email : 
-                continue
-            mailSent = True
-            generated_token = generate_token(email)
-            # send mail
-            email_token(email,generated_token)
-        # second verify the token given by the client
-        if(not tokenSent) :
-            token = net.read(connection)
-            if(not token) :
-                continue
-            tokenSent = True
-            if(verify_token(email,token)) :
-                net.write(connection,"1")
-            else : 
-                net.write(connection,"0")
-        if(mailSent and tokenSent) :
-            authentication = True
-            break
+        socket (socket) : socket between the client and the server.
+        MAX_ATTEMPTS (int): maximum number of wrong tokens.
 
-    return authentication
+    Returns:
+        bool: Whether user is authenticated or not.
+    """    
+    import mongo
+    
+    email = net.read(socket)
+    
+    generated_token = generate_token(email)
+    # send mail
+    # email_token(email,generated_token)
+    # second verify the token given by the client
+    attempt = 1
+    while attempt <= MAX_ATTEMPTS:
+        token = net.read(socket)
+        if(verify_token(email,token)):
+            net.write(socket,"1")
+            mongo.db["tokens"].delete_one({ "email": email })
+            return True
+        else:
+            attempt += 1
+            net.write(socket,"0")
+
+    mongo.db["tokens"].delete_one({ "email": email })
+    return False

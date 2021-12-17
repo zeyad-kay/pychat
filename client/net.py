@@ -16,7 +16,7 @@ def connect(host: str, port: int):
         sock.connect((host, port))
     except Exception as e:
         logging.error(e)
-        sock = sock.close()
+        sock = close(sock)
     finally:
         return sock
 
@@ -41,3 +41,16 @@ def read(socket: socket.socket):
     # simulates waiting time of server response
     # mainly used for testing the typing animation
     return socket.recv(1024).decode()
+
+def close(socket: socket.socket):
+    """Close socket.
+
+    Args:
+        socket (socket): socket to close.
+
+    Returns:
+        None if successful.
+    """    
+    # simulates waiting time of server response
+    # mainly used for testing the typing animation
+    return socket.close()
