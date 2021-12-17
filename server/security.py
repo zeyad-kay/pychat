@@ -89,3 +89,6 @@ def email_token(email: str, token: str):
     Token: {token}
     '''
     mail.server.sendmail(from_addr=os.environ.get("SENDER_EMAIL"), to_addrs=email, msg=msg)
+
+def authenticate():
+    pass

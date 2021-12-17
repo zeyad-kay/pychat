@@ -19,4 +19,14 @@ it 3 or 4 to prevent overloading your device.
 2. Make requests asynchronous like Node.js, you will have to set the sockets
 as non blocking and use the asyncio module that provides some helpers.
 (Ignore this if you haven't used Node.js or you don't have time.)
+
 '''
+import net
+HOST = "127.0.0.1" #localhost
+PORT = 3000
+def server() :
+    net.start()
+    
+    pass
+if __name__ == "__main__":
+    server()
