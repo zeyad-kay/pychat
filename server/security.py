@@ -3,6 +3,8 @@ Implement server security functions.
 Functions include email validation before starting the chat. A token is sent to
 the user's provided email and the token must match the one on the server.
 '''
+import net
+
 def valid_email(email: str) -> bool:   
     import re
     return re.fullmatch(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', email)
@@ -90,5 +92,40 @@ def email_token(email: str, token: str):
     '''
     mail.server.sendmail(from_addr=os.environ.get("SENDER_EMAIL"), to_addrs=email, msg=msg)
 
-def authenticate():
-    pass
+def authenticate(connection):
+    """Authenticate user before starting the chat by sending a token to his email and 
+    comparing that token to the entered one. it waits until authentication is done.
+
+    Args:
+        connection : Connection between the client and the server.
+    
+    """ 
+    authentication = False
+    mailSent = False
+    tokenSent = False
+    email = None
+    while True :
+        # first listen to the message that carry the email to send tha token
+        if(not mailSent) :
+            email = net.read(net.current_socket)
+            if not email : 
+                continue
+            mailSent = True
+            generated_token = generate_token(email)
+            # send mail
+            email_token(email,generated_token)
+        # second verify the token given by the client
+        if(not tokenSent) :
+            token = net.read(net.current_socket)
+            if(not token) :
+                continue
+            tokenSent = True
+            if(verify_token(email,token)) :
+                net.write(net.current_socket,"1")
+            else : 
+                net.write(net.current_socket,"0")
+        if(mailSent and tokenSent) :
+            authentication = True
+            break
+        
+    return authentication

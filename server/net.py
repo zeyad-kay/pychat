@@ -8,11 +8,12 @@ def start(host: str, port: int):
         port (int): port to connect to.
 
     Returns:
-        None.
+        socket object. None if unsuccessful.
     """    
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((host,port))
     sock.listen()
+    return sock
 
 def write(socket: socket.socket, data: str):
     """Write data into a socket.

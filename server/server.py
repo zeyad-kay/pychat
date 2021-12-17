@@ -21,12 +21,29 @@ as non blocking and use the asyncio module that provides some helpers.
 (Ignore this if you haven't used Node.js or you don't have time.)
 
 '''
+from os import truncate
 import net
+import concurrent.futures
+import logging
+from security import authenticate
+
 HOST = "127.0.0.1" #localhost
 PORT = 3000
 def server() :
-    net.start()
-    
-    pass
+    logging.basicConfig(filename="logs/server.log",filemode="w",level=20, format='%(asctime)s:%(levelNAME)s:%(NAME)s:%(message)s')
+
+    # start the server
+    net.current_socket = net.start()
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as exec:
+        # get the connection from a client
+        conn, addr = net.current_socket.accept()
+        logging.info(f"Connected by {addr}")
+
+        # verify the token to start the chat
+        authenticate(conn)
+
+        
+         
 if __name__ == "__main__":
     server()
