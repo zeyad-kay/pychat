@@ -109,7 +109,7 @@ def authenticate(socket: socket.socket, MAX_ATTEMPTS: int) -> bool:
     
     generated_token = generate_token(email)
     # send mail
-    # email_token(email,generated_token)
+    email_token(email,generated_token)
     # second verify the token given by the client
     attempt = 1
     while attempt <= MAX_ATTEMPTS:

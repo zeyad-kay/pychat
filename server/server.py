@@ -29,6 +29,7 @@ import time
 import os
 import mail
 import mongo
+import chatbot
 
 HOST = "127.0.0.1" #localhost
 PORT = 3000
@@ -43,10 +44,9 @@ def handler(socket: socket.socket, ipaddress):
             # chat loop
             while True :
                 data = net.read(socket)
-                print("sleep...")
-                time.sleep(3)
-                print("send...")
-                net.write(socket, "Data from server")
+                time.sleep(2)
+                net.write(socket, chatbot.get_response(data))
+    
     except ValueError:
         pass
     except Exception as e:
