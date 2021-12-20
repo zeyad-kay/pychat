@@ -1,5 +1,4 @@
 import socket
-import logging
 
 def start(host: str, port: int) -> socket.socket:
     """Initiate the server.
@@ -11,12 +10,8 @@ def start(host: str, port: int) -> socket.socket:
         socket object. None if unsuccessful.
     """    
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        sock.bind((host,port))
-        sock.listen()
-    except Exception as e:
-        logging.error(e)
-        sock = close(sock)
+    sock.bind((host,port))
+    sock.listen()
     return sock
 
 def write(socket: socket.socket, data: str):

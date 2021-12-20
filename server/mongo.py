@@ -11,7 +11,6 @@ token.schema = {
     _id,
     email,
     token,
-    expiry
 }
 '''
 

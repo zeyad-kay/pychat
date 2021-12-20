@@ -117,10 +117,10 @@ def authenticate(socket: socket.socket, MAX_ATTEMPTS: int) -> bool:
         if(verify_token(email,token)):
             net.write(socket,"1")
             mongo.db["tokens"].delete_one({ "email": email })
-            return True
+            return email, True
         else:
             attempt += 1
             net.write(socket,"0")
 
     mongo.db["tokens"].delete_one({ "email": email })
-    return False
+    return email, False
