@@ -80,3 +80,5 @@ def request_token(email: str):
         email (str): Email to send the token to.
     """    
     net.write(net.current_socket, email)
+    # read anything just to make sure there is no timeout
+    net.read(net.current_socket)
