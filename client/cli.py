@@ -11,7 +11,7 @@ MAX_ATTEMPTS = 3
 TIMEOUT = 60 #seconds
 
 def cli():
-    logging.basicConfig(filename="logs/client.log",filemode="w",level=20, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+    logging.basicConfig(filename="client.log",filemode="w",level=20, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
 
     # Initialize connection to the host
     # only done on start and we keep it open
