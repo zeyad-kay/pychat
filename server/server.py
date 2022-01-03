@@ -71,7 +71,7 @@ def handler(socket: socket.socket, ipaddress: str):
         return
 
 def server():
-    logging.basicConfig(filename="logs/server.log",filemode="w",level=20, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
+    logging.basicConfig(filename="server.log",filemode="w",level=20, format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
 
     # start the server
     # connect mongodb and mail servers
