@@ -1,4 +1,3 @@
-import socket
 import net
 from animation import animate_typing
 from security import authenticate
@@ -16,21 +15,21 @@ def cli():
     # Initialize connection to the host
     # only done on start and we keep it open
     # until we are done
-    net.current_socket = net.connect(HOST, PORT)
+    net.current_socket = net.connect(HOST, PORT) # type: ignore
     
     try:
-        if net.current_socket is None:
+        if net.current_socket is None: # type: ignore
             print(f"Server Unavailable. Try again later!")
             exit()
     
-        net.current_socket.settimeout(TIMEOUT)
+        net.current_socket.settimeout(TIMEOUT) # type: ignore
 
         print(f"Connection Timeout after {TIMEOUT} seconds of inactivity.")
         NAME, EMAIL, OK = authenticate(MAX_ATTEMPTS)
 
         if not OK:
             print(f"Unauthorized. Try again later!")
-            net.close(net.current_socket)
+            net.close(net.current_socket) # type: ignore
             exit()
 
         # make requests on another thread to make animations
@@ -44,17 +43,17 @@ def cli():
                 if text == "":
                     break
 
-                net.write(net.current_socket, text)
+                net.write(net.current_socket, text) # type: ignore
 
                 # start waiting for response on the other thread
                 # freeing up the main one for animation
-                response = exec.submit(net.read, net.current_socket)
+                response = exec.submit(net.read, net.current_socket) # type: ignore
 
                 while not response.done():
                     animate_typing()
 
                 if response.result().lower() == "bye!":
-                    net.close(net.current_socket)
+                    net.close(net.current_socket) # type: ignore
                     print(f"Chatbot: bye!", flush=True)
                     exit()
                 else:
@@ -63,7 +62,7 @@ def cli():
     except Exception:
         print("Timeout!", flush=True)
     finally:
-        net.close(net.current_socket)
+        net.close(net.current_socket) # type: ignore
         exit()
 
 if __name__ == "__main__":

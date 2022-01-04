@@ -9,6 +9,7 @@ chat.schema = {
 }
 token.schema = {
     _id,
+    timestamp,
     email,
     token,
 }

@@ -1,4 +1,5 @@
 import socket
+from typing import Union
 
 def start(host: str, port: int) -> socket.socket:
     """Initiate the server.
@@ -7,7 +8,7 @@ def start(host: str, port: int) -> socket.socket:
         port (int): port to connect to.
 
     Returns:
-        socket object. None if unsuccessful.
+        socket object
     """    
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((host,port))
@@ -23,7 +24,7 @@ def write(socket: socket.socket, data: str):
     """    
     socket.sendall(data.encode())
 
-def read(socket: socket.socket):
+def read(socket: socket.socket) -> str:
     """Read data from the socket.
 
     Args:

@@ -26,6 +26,7 @@ import mail
 import mongo
 import chatbot
 import sys
+import datetime
 
 HOST = "127.0.0.1" #localhost
 PORT = 3000
@@ -39,6 +40,7 @@ def handler(socket: socket.socket, ipaddress: str):
         socket (socket.socket): client connection socket.
         ipaddress (str): client IP address.
     """    
+    logging.info(f"{ipaddress} connected.")
     chat = ''
     try:
         # verify the token to start the chat
@@ -64,7 +66,7 @@ def handler(socket: socket.socket, ipaddress: str):
     finally:
         # save to db if there was a chat
         if len(chat):
-            mongo.db["chats"].insert_one({ "chat": chat.rstrip("\n"), "email": email })
+            mongo.db["chats"].insert_one({ "timestamp": datetime.datetime.now(), "chat": chat.rstrip("\n"), "email": email }) # type: ignore
     
         logging.info(f"{ipaddress} disconnected.")
         net.close(socket)
@@ -75,23 +77,24 @@ def server():
 
     # start the server
     # connect mongodb and mail servers
+    sock = None
     try:
         sock = net.start(HOST, PORT)
         logging.info(f"Server listening on port {PORT}.")
-        mongo.db = mongo.connect()
+        mongo.db = mongo.connect() # type: ignore
         logging.info("MongoDB server connected.")
-        mail.server = mail.connect()
+        mail.server = mail.connect() # type: ignore
         logging.info("Mail server connected.")
     except Exception as e:
         logging.error(e)
-        net.close(sock)
+        if sock:
+            net.close(sock)
         exit()
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as exec:
         while True:
             conn, addr = sock.accept()
             conn.settimeout(TIMEOUT)
-            logging.info(f"{addr[0]} connected.")
             # handle client in a new thread
             exec.submit(handler, conn, addr[0])
 

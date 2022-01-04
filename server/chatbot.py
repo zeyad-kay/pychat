@@ -5,7 +5,7 @@ based on user input.
 
 import re
 
-def message_probability(user_message, recognised_words, required_words=[]):
+def message_probability(user_message: list[str], recognised_words: list[str], required_words:list[str]) -> int:
     message_certainty = 0
     has_required_words = False
 
@@ -30,11 +30,11 @@ def message_probability(user_message, recognised_words, required_words=[]):
       return 0
 
 
-def check_all_messages(message):
+def check_all_messages(message: list[str]) -> str:
     highest_prob_list = {}
 
     # Simplifies response creation / adds it to the dict
-    def response(bot_response, list_of_words, required_words=[]):
+    def response(bot_response:str, list_of_words:list[str], required_words:list[str]):
         nonlocal highest_prob_list
         highest_prob_list[bot_response] = message_probability(message, list_of_words, required_words)
 
@@ -48,15 +48,13 @@ def check_all_messages(message):
     response('You probably need to go to an Oculist clinic', ['eye','see','blurry','blur','shades','shadows'], required_words=['eye','see','blurry','blur','shades','shadows'])
     response('You probably need to go to an Orthopedic clinic', ['back','bone','arm','leg','broken'], required_words=['back','bone','arm','leg','broken'])
 
-    best_match = max(highest_prob_list, key=highest_prob_list.get)
+    best_match = max(highest_prob_list, key=highest_prob_list.get) # type: ignore
     if highest_prob_list[best_match] == 0:
       return "Not sure i got what you said"
     else:
       return best_match
 
 
-# Used to get the response
-def get_response(user_input):
+def get_response(user_input: str) -> str:
     split_message = re.split(r'\s+|[,;?!.-]\s*', user_input.lower())
-    response = check_all_messages(split_message)
-    return response
+    return check_all_messages(split_message)

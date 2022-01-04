@@ -1,7 +1,8 @@
 import socket
 import logging
+from typing import Union
 
-def connect(host: str, port: int):
+def connect(host: str, port: int) -> Union[socket.socket, None]:
     """Connect to a server on specified host and port.
 
     Args:
@@ -29,7 +30,7 @@ def write(socket: socket.socket, data: str):
     """    
     socket.sendall(data.encode())
 
-def read(socket: socket.socket):
+def read(socket: socket.socket) -> str:
     """Read data from a socket
 
     Args:
@@ -42,7 +43,7 @@ def read(socket: socket.socket):
     # mainly used for testing the typing animation
     return socket.recv(1024).decode()
 
-def close(socket: socket.socket):
+def close(socket: socket.socket) -> None:
     """Close socket.
 
     Args:
