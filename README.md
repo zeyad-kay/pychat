@@ -1,7 +1,6 @@
 # PyChat
 
-Healthcare Chatbot that advices patients for visiting clinics depending on patients complains. [Repo](https://github.com/zeyad-kay/pychat). [Demo](https://1drv.ms/u/s!Ah_oHERboezWkWg8A6pMJP9BVbLj?e=bMRT3r).
-
+Healthcare Chatbot that advices patients for visiting clinics depending on patients complaints.
 # Setup
 
 1. From the command line create a virtual environment and activate.
